@@ -1,7 +1,7 @@
 //this file was auto generated, plz don't modify it
 #include "lua_tinker.h"
 #include "test.h"
-void export_to_lua_auto(lua_State* L)
+void export_to_lua_auto(lua_State* L) // 導出到lua
 {
 	lua_tinker::def(L, "Number2Interger", &Number2Interger);
 	lua_tinker::def(L, "addUL", &addUL);
@@ -42,11 +42,11 @@ void export_to_lua_auto(lua_State* L)
 	lua_tinker::def(L, "test_default_params", &test_default_params, 5, 8);
 	lua_tinker::def(L, "test_lua_function", &test_lua_function);
 	lua_tinker::def(L, "test_lua_function_ref", &test_lua_function_ref);
-	lua_tinker::def(L, "test_overload", lua_tinker::args_type_overload_functor(
+	lua_tinker::def(L, "test_overload", lua_tinker::args_type_overload_functor(// 重载 不同参数个数 不统参数类型
 		lua_tinker::make_functor_ptr((int(*)(int))(&test_overload)),
 		lua_tinker::make_functor_ptr((int(*)(int, double))(&test_overload)),
 		lua_tinker::make_functor_ptr((int(*)(int, int, double))(&test_overload))));
-	lua_tinker::def(L, "test_overload_default", lua_tinker::args_type_overload_functor(
+	lua_tinker::def(L, "test_overload_default", lua_tinker::args_type_overload_functor(// 重載 帶默認參數
 		lua_tinker::make_functor_ptr((int(*)(int, bool))(&test_overload_default)),
 		lua_tinker::make_functor_ptr((int(*)(int, int, bool))(&test_overload_default), 1 /*default_args_count*/, 1 /*default_args_start*/),
 		lua_tinker::make_functor_ptr((int(*)(int, int, int, double, double, double, double, const std::string &))(&test_overload_default), 5 /*default_args_count*/, 2 /*default_args_start*/)), true, 1.0, 2.0, 3.0, 4.0, std::string("test"));
@@ -70,8 +70,8 @@ void export_to_lua_auto(lua_State* L)
 	
 	lua_tinker::set(L, "g_c_double", g_c_double);
 	lua_tinker::set(L, "g_c_int", g_c_int);
-	lua_tinker::class_add<IntOpTest>(L, "IntOpTest", true);
-	lua_tinker::class_def<IntOpTest>(L, "__mul", &IntOpTest::operator*);
+	lua_tinker::class_add<IntOpTest>(L, "IntOpTest", true); //添加类也可以认为添加table, 参数bInitShared来注册导出类对应的shared_ptr对象
+	lua_tinker::class_def<IntOpTest>(L, "__mul", &IntOpTest::operator*); //给栈注册函数 函数的参数不要是const类型的
 	lua_tinker::class_def<IntOpTest>(L, "__add", &IntOpTest::operator+);
 	lua_tinker::class_def<IntOpTest>(L, "__sub", &IntOpTest::operator-);
 	lua_tinker::class_def<IntOpTest>(L, "__idiv", &IntOpTest::operator/);
@@ -80,8 +80,11 @@ void export_to_lua_auto(lua_State* L)
 	lua_tinker::class_def<IntOpTest>(L, "__eq", &IntOpTest::operator==);
 	lua_tinker::class_con<IntOpTest>(L, lua_tinker::constructor<IntOpTest, int>::invoke);
 	lua_tinker::class_mem<IntOpTest>(L, "m_n", &IntOpTest::m_n);
+	// 注册一个namespace
 	lua_tinker::namespace_add(L, "NS_TEST");
+	// 注册一个namespace中的函数
 	lua_tinker::namespace_def(L, "NS_TEST", "test_function_in_namespace", &NS_TEST::test_function_in_namespace);
+	// 注册一个namespace中的变量或枚举
 	lua_tinker::namespace_set(L, "NS_TEST", "ENUM_1", NS_TEST::ENUM_1);
 	lua_tinker::namespace_set(L, "NS_TEST", "ENUM_2", NS_TEST::ENUM_2);
 	lua_tinker::namespace_set(L, "NS_TEST", "ENUM_3", NS_TEST::ENUM_3);
@@ -136,17 +139,23 @@ void export_to_lua_auto(lua_State* L)
 	lua_tinker::class_con<ff>(L, lua_tinker::args_type_overload_constructor(
 		new lua_tinker::constructor<ff, double, unsigned char, int>(1 /*default_args_count*/, 1 /*default_args_start*/),
 		new lua_tinker::constructor<ff, int>(1 /*default_args_count*/, 2 /*default_args_start*/)), 1, 0);
+	// 只读变量(const变量)
 	lua_tinker::class_mem_readonly<ff>(L, "m_const_val", &ff::m_const_val);
 	lua_tinker::class_mem<ff>(L, "m_val", &ff::m_val);
+    // 只读静态变量
 	lua_tinker::class_mem_static_readonly<ff>(L, "s_const_val", &ff::s_const_val);
+    // 类静态变量
 	lua_tinker::class_mem_static<ff>(L, "s_ref", &ff::s_ref);
 	lua_tinker::class_mem_static<ff>(L, "s_val", &ff::s_val);
+	// 枚举
 	lua_tinker::class_var_static<ff>(L, "ENUM_1", ff::ENUM_1);
 	lua_tinker::class_var_static<ff>(L, "ENUM_2", ff::ENUM_2);
 	lua_tinker::class_var_static<ff>(L, "ENUM_3", ff::ENUM_3);
 	lua_tinker::class_add<ff::inner>(L, "ff::inner", true);
 	lua_tinker::class_def<ff::inner>(L, "test_func", &ff::inner::test_func);
+	// 类静态函数 使用class.foo()来调用，不要使用class:foo()
 	lua_tinker::class_def_static<ff::inner>(L, "test_static_func", &ff::inner::test_static_func);
+	// 关联meta表 getmetatable(scope_global_name)[name] = getmetatable(global_name),来实现namespace, inner class的关联
 	lua_tinker::scope_inner(L, "ff", "inner", "ff::inner");
 	lua_tinker::class_add<ff_base>(L, "ff_base", true);
 	lua_tinker::class_def<ff_base>(L, "test_base_callfn", &ff_base::test_base_callfn);
@@ -155,6 +164,7 @@ void export_to_lua_auto(lua_State* L)
 	lua_tinker::class_def<ff_other_base>(L, "test_other_callfn", &ff_other_base::test_other_callfn);
 	lua_tinker::class_add<ff_other_baseA>(L, "ff_other_baseA", true);
 	lua_tinker::class_add<ff_other_baseB>(L, "ff_other_baseB", true);
+    // 支持继承多个父类，查找时根据顺序依次查找，深度优先
 	lua_tinker::class_inh<ff, ff_base>(L);
 	lua_tinker::class_inh<ff, ff_other>(L);
 	lua_tinker::class_inh<ff_other, ff_other_baseA>(L);
