@@ -7,6 +7,7 @@ void test_class_member(lua_State* L)
 
 	g_test_func_set["test_lua_member_property"] = [L]()->bool
 	{
+	    //raw string R"()" 不會進行轉義
 		std::string luabuf =
 			R"(function test_lua_member_property()
 					local pFFShared =  make_ff();
@@ -15,8 +16,8 @@ void test_class_member(lua_State* L)
 					return raw_pff.m_prop == 88;
 				end	
 			)";
-		lua_tinker::dostring(L, luabuf.c_str());
-		return  lua_tinker::call<bool>(L, "test_lua_member_property");
+		lua_tinker::dostring(L, luabuf.c_str());// 执行lua脚本，如果是文件则需要调用lua::dofile。
+		return  lua_tinker::call<bool>(L, "test_lua_member_property");//调用lua中的函数 函數名：test_lua_member_property , 參數名稱省略
 	};
 	g_test_func_set["test_lua_member_readonly_1"] = [L]()->bool
 	{

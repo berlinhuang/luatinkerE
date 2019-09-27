@@ -13,6 +13,7 @@
 
 #define export_lua
 
+//export_lua 被替换后什么都没有，只是增加代码的可读性，这是宏定义的作用之一  这些函数是给lua用的
 
 export_lua extern int g_c_int;
 export_lua extern double g_c_double;

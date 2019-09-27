@@ -77,7 +77,7 @@ int main()
 	lua_tinker::init(L);
 
 
-	extern void export_to_lua_auto(lua_State* L);
+	extern void export_to_lua_auto(lua_State* L); //extern 说明在别处定义 在此处引用
 
 
 
